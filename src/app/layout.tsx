@@ -1,4 +1,5 @@
 import AuthProvider from '@/components/providers/auth-provider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import './globals.css';
@@ -16,9 +17,16 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="pt-BR">
+		<html lang="pt-BR" className="dark" style={{ colorScheme: 'dark' }}>
 			<body className={`${poppins.className} antialiased`}>
-				<AuthProvider>{children}</AuthProvider>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					<AuthProvider>{children}</AuthProvider>
+				</ThemeProvider>
 			</body>
 		</html>
 	);

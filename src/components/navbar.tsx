@@ -4,8 +4,8 @@ import NavBarItem from './navbar-item';
 
 export default function NavBar() {
 	return (
-		<div className="max-h-screen px-5 py-4 mt-4 mx-2 flex flex-col max-w-[200px]">
-			<Link href={'/'}>
+		<div className="h-screen px-5 py-4 mt-4 mx-2 flex flex-col max-w-[200px]">
+			<Link href={'/'} className="px-1.5">
 				<img src="/logo.png" alt="Logo" width={30} height={30} />
 			</Link>
 			<div className="mt-8 flex flex-col gap-5 flex-1">

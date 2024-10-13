@@ -27,25 +27,18 @@ import {
 	PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import {
+	createNewTransactionSchema,
+	createNewTransactionSchemaType,
+} from '@/schema/transaction';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 interface CreateNewTransactionProps {
 	type: 'income' | 'expense';
 }
-
-const createNewTransactionSchema = z.object({
-	description: z.string().optional(),
-	amount: z.coerce.number().min(1).positive().multipleOf(0.01),
-	date: z.coerce.date(),
-	type: z.union([z.literal('income'), z.literal('expense')]),
-});
-export type createNewTransactionSchemaType = z.infer<
-	typeof createNewTransactionSchema
->;
 
 export default function CreateNewTransaction({
 	type,
@@ -74,7 +67,7 @@ export default function CreateNewTransaction({
 				<Button
 					className={cn(
 						type === 'income'
-							? 'border border-emerald-400 bg-emerald-800 text-zinc-200 hover:bg-emerald-700 transition-colors'
+							? 'border border-emerald-400 bg-emerald-800 text-zinc-50 hover:bg-emerald-700 transition-colors'
 							: 'border border-red-400 bg-red-800 text-zinc-50 hover:bg-red-700 transition-colors'
 					)}
 				>
@@ -114,6 +107,29 @@ export default function CreateNewTransaction({
 							)}
 						/>
 
+						<FormField
+							control={form.control}
+							name="category"
+							render={({ field }) => (
+								<FormItem>
+									<div className="flex items-center gap-1">
+										<FormLabel>Categoria</FormLabel>
+										<FormDescription>obrigatório</FormDescription>
+									</div>
+									<FormControl>
+										<Input
+											placeholder="Digite o nome da sua categoria"
+											defaultValue={''}
+											{...field}
+										/>
+									</FormControl>
+									<span className="text-red-300 text-sm">
+										{form.formState.errors.category?.message &&
+											'Digite uma categoria.'}
+									</span>
+								</FormItem>
+							)}
+						/>
 						<FormField
 							control={form.control}
 							name="amount"
@@ -186,7 +202,7 @@ export default function CreateNewTransaction({
 						/>
 					</form>
 				</Form>
-				<DialogFooter className="flex items-center justify-end gap-2">
+				<DialogFooter className="flex items-center justify-end gap-2 mt-4">
 					<DialogClose asChild>
 						<Button
 							variant={'secondary'}

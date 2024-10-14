@@ -1,5 +1,6 @@
 'use client';
 
+import CreateTransaction from '@/app/actions/create-transaction';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -26,15 +27,19 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover';
+import DateToUTCDate from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import {
 	createNewTransactionSchema,
 	createNewTransactionSchemaType,
 } from '@/schema/transaction';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, Loader2 } from 'lucide-react';
+import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 interface CreateNewTransactionProps {
 	type: 'income' | 'expense';
@@ -51,15 +56,49 @@ export default function CreateNewTransaction({
 		},
 	});
 
-	function submit(data: createNewTransactionSchemaType) {
-		console.log(data);
-		form.reset({
-			amount: 1,
-			date: new Date(),
-			description: '',
-			type,
-		});
-	}
+	const queryClient = useQueryClient();
+
+	const { mutate, isPending } = useMutation({
+		mutationFn: CreateTransaction,
+		onSuccess: () => {
+			toast.success('Transação criada com sucesso 🎉', {
+				id: 'create-transaction',
+			});
+
+			form.reset({
+				amount: 1,
+				category: '',
+				date: new Date(),
+				description: '',
+				type,
+			});
+
+			queryClient.invalidateQueries({
+				queryKey: ['overview'],
+			});
+		},
+		onError: (error) => {
+			toast.error(`Transação falhou. ${error}`, {
+				id: 'create-transaction',
+			});
+		},
+	});
+
+	const onSubmit = useCallback(
+		(values: createNewTransactionSchemaType) => {
+			toast.loading('Criando transação...', {
+				id: 'create-transaction',
+			});
+
+			mutate({
+				...values,
+				date: DateToUTCDate(values.date),
+			});
+
+			console.log('certo');
+		},
+		[mutate]
+	);
 
 	return (
 		<Dialog>
@@ -86,7 +125,7 @@ export default function CreateNewTransaction({
 					</DialogTitle>
 				</DialogHeader>
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(submit)} className="space-y-4">
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 						<FormField
 							control={form.control}
 							name="description"
@@ -212,8 +251,16 @@ export default function CreateNewTransaction({
 							Cancelar
 						</Button>
 					</DialogClose>
-					<Button type="submit" onClick={form.handleSubmit(submit)}>
-						Salvar
+					<Button
+						type="submit"
+						onClick={form.handleSubmit(onSubmit)}
+						disabled={isPending}
+					>
+						{isPending ? (
+							<Loader2 size={16} className="animate-spin" />
+						) : (
+							'Criar transação'
+						)}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

@@ -6,7 +6,51 @@ datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
 }
- 
+
+model Category {
+  createdAt DateTime @default(now())
+  name      String
+  userId    String
+  type      String   @default("income")
+
+  @@unique([name, userId, type])
+}
+
+model Transactions {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updateAt  DateTime @default(now())
+
+  amount      Float
+  description String
+  date        DateTime
+  userId      String
+  type        String   @default("income")
+
+  category String
+}
+
+model MonthHistory {
+  userId  String
+  day     Int
+  month   Int
+  year    Int
+  income  Float
+  expense Float
+
+  @@id([day, month, year, userId])
+}
+
+model YearHistory {
+  userId  String
+  month   Int
+  year    Int
+  income  Float
+  expense Float
+
+  @@id([month, year, userId])
+}
+
 model User {
   id            String          @id @default(cuid())
   name          String?
@@ -16,11 +60,11 @@ model User {
   accounts      Account[]
   sessions      Session[]
   Authenticator Authenticator[]
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -34,34 +78,34 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
 }
- 
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@unique([identifier, token])
 }
- 
+
 model Authenticator {
   credentialID         String  @unique
   userId               String
@@ -71,8 +115,8 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([userId, credentialID])
 }

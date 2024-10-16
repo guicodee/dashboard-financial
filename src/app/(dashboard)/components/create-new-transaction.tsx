@@ -94,8 +94,6 @@ export default function CreateNewTransaction({
 				...values,
 				date: DateToUTCDate(values.date),
 			});
-
-			console.log('certo');
 		},
 		[mutate]
 	);

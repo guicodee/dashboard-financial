@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import CreateNewTransaction from './components/create-new-transaction';
+import HistoryCharts from './components/history-charts';
 import Overview from './components/overview';
 
 export default function Page() {
@@ -28,6 +29,9 @@ export default function Page() {
 			</div>
 			<div className="mt-8">
 				<Overview />
+			</div>
+			<div className="mt-8">
+				<HistoryCharts />
 			</div>
 		</div>
 	);

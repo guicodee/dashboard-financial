@@ -66,7 +66,7 @@ export default function CreateNewTransaction({
 			});
 
 			form.reset({
-				amount: 1,
+				amount: 0,
 				category: '',
 				date: new Date(),
 				description: '',
@@ -181,7 +181,7 @@ export default function CreateNewTransaction({
 											type="number"
 											placeholder="Digite o valor da sua transação"
 											defaultValue={0}
-											min={2}
+											min={1}
 											{...field}
 										/>
 									</FormControl>

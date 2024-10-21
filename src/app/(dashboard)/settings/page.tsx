@@ -1,8 +1,9 @@
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
+
+import { Input } from '@/components/ui/input';
 import ButtonDeleteAccount from './components/button-delete-account';
 import ButtonOut from './components/button-out';
 
@@ -14,15 +15,17 @@ export default async function SettingsPage() {
 		<div className="container mx-auto mt-4 py-4 flex flex-col">
 			<h1 className="text-2xl font-bold">Configurações</h1>
 			<div className="mt-12 flex gap-12 w-full">
-				<div className="flex flex-col">
-					<h2 className="text-lg font-bold">Perfil</h2>
-					<p className="text-muted-foreground text-sm">
-						Isso é exibido no seu perfil
-					</p>
+				<div className="flex flex-col gap-4">
+					<div>
+						<h2 className="text-lg font-bold">Perfil</h2>
+						<p className="text-muted-foreground text-sm">
+							Isso é exibido no seu perfil
+						</p>
+					</div>
 				</div>
 				<div className="flex flex-col gap-3 w-96">
-					<Input value={user.user.email as string} disabled={true} />
-					<Input value={user.user.name as string} />
+					<Input value={user.user.email as string} disabled />
+					<Input value={user.user.name as string} disabled />
 				</div>
 			</div>
 			<div className="mt-12">
@@ -54,6 +57,9 @@ export default async function SettingsPage() {
 						<ButtonDeleteAccount />
 					</div>
 				</div>
+			</div>
+			<div className="mt-12 flex flex-col gap-8">
+				<Separator />
 			</div>
 		</div>
 	);
